@@ -4,7 +4,9 @@ import * as routers from './routers';
 import compression from 'compression';
 import shouldCompress from './helpers/server.helper';
 import cors from 'cors';
+import connectDB from './db/mongo';
 
+connectDB();
 const app = express(),
     port = process.env.NODEJS_PORT || 3000,
     root = '/api/v1/',

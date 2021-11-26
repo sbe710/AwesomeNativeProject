@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Text, View, StyleSheet, TextInput, Button } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
@@ -7,9 +7,19 @@ import Constants from 'expo-constants';
 interface NewAutoModel {
     autoName: string;
     autoNumber: string;
+    _id: string;
 }
 
 const FormComponent = () => {
+    const [autos, setAutos] = useState<NewAutoModel[]>();
+
+    useEffect(() => {
+        axios.get('http://192.168.0.65:3000/api/v1/auto').then(res => {
+            console.log(res.data);
+            setAutos(res.data);
+        });
+    });
+
     const { handleSubmit, control } = useForm<NewAutoModel>({
         defaultValues: {
             autoName: '',
@@ -17,9 +27,8 @@ const FormComponent = () => {
         },
     });
     const onSubmit = async (data: NewAutoModel) => {
-        console.log(data);
-        const res = await axios.get('http://192.168.0.65:3000/api/v1/auto');
-        console.log(res.data);
+        const request = await axios.post('http://192.168.0.65:3000/api/v1/auto', data);
+        console.log(request.data);
     };
 
     return (
@@ -56,6 +65,15 @@ const FormComponent = () => {
             <View style={styles.button}>
                 <Button title="Add new Auto" onPress={handleSubmit(onSubmit)} />
             </View>
+
+            <View>
+                {autos?.map(auto => (
+                    <View key={auto._id} style={styles.autos}>
+                        <Text style={styles.title}>{auto.autoNumber}</Text>
+                        <Text style={styles.title}>{auto.autoName}</Text>
+                    </View>
+                ))}
+            </View>
         </View>
     );
 };
@@ -87,5 +105,12 @@ const styles = StyleSheet.create({
         height: 40,
         padding: 10,
         borderRadius: 4,
+    },
+    autos: {
+        marginTop: 40,
+        backgroundColor: 'white',
+    },
+    title: {
+        color: 'red',
     },
 });
