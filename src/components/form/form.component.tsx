@@ -1,37 +1,30 @@
 import React from 'react';
+import axios from 'axios';
 import { Text, View, StyleSheet, TextInput, Button } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import Constants from 'expo-constants';
 
+interface NewAutoModel {
+    autoName: string;
+    autoNumber: string;
+}
+
 const FormComponent = () => {
-    const {
-        register,
-        setValue,
-        handleSubmit,
-        control,
-        reset,
-        formState: { errors },
-    } = useForm({
+    const { handleSubmit, control } = useForm<NewAutoModel>({
         defaultValues: {
-            firstName: '',
-            lastName: '',
+            autoName: '',
+            autoNumber: '',
         },
     });
-    const onSubmit = (data: any) => {
+    const onSubmit = async (data: NewAutoModel) => {
         console.log(data);
+        const res = await axios.get('http://192.168.0.65:3000/api/v1/auto');
+        console.log(res.data);
     };
-
-    const onChange = (arg: any) => {
-        return {
-            value: arg.nativeEvent.text,
-        };
-    };
-
-    console.log('errors', errors);
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>First name</Text>
+            <Text style={styles.label}>Auto Name</Text>
             <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -42,10 +35,10 @@ const FormComponent = () => {
                         value={value}
                     />
                 )}
-                name="firstName"
+                name="autoName"
                 rules={{ required: true }}
             />
-            <Text style={styles.label}>Last name</Text>
+            <Text style={styles.label}>Auto number</Text>
             <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -56,24 +49,12 @@ const FormComponent = () => {
                         value={value}
                     />
                 )}
-                name="lastName"
+                name="autoNumber"
                 rules={{ required: true }}
             />
 
             <View style={styles.button}>
-                <Button
-                    title="Reset"
-                    onPress={() => {
-                        reset({
-                            firstName: 'Bill',
-                            lastName: 'Luo',
-                        });
-                    }}
-                />
-            </View>
-
-            <View style={styles.button}>
-                <Button title="Button" onPress={handleSubmit(onSubmit)} />
+                <Button title="Add new Auto" onPress={handleSubmit(onSubmit)} />
             </View>
         </View>
     );
@@ -96,9 +77,9 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         paddingTop: Constants.statusBarHeight,
-        padding: 8,
+        padding: 16,
         backgroundColor: '#0e101c',
     },
     input: {
