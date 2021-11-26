@@ -1,17 +1,5 @@
 import * as express from 'express';
-import { Schema, model } from 'mongoose';
-
-interface IAuto {
-    autoNumber: string;
-    autoName: string;
-}
-
-const schema = new Schema<IAuto>({
-    autoNumber: { type: String, required: true },
-    autoName: { type: String, required: true },
-});
-
-const AutoModel = model<IAuto>('Auto', schema);
+import { AutoModel } from '../db/models/auto.model';
 
 const autoRouter = express.Router();
 
@@ -35,7 +23,6 @@ autoRouter.post('/', async (req, res) => {
     console.log('REQUEST', req.body);
 
     const auto = new AutoModel({ autoName: req.body.autoName, autoNumber: req.body.autoNumber });
-    // console.log('req', req);
     await auto.save();
 
     res.status(200).json({ auto });
