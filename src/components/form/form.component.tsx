@@ -30,7 +30,6 @@ const FormComponent = () => {
         const { data } = await axios.post<AutoModel>('http://192.168.0.65:3000/api/v1/auto', formData);
 
         setAutos(autos => [...autos, data]);
-        console.log(data);
     };
 
     const onDelete = async (auto: AutoModel) => {

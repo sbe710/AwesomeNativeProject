@@ -24,7 +24,7 @@ autoRouter.post('/', async (req, res) => {
         const auto = new AutoModel({ autoName: req.body.autoName, autoNumber: req.body.autoNumber });
         await auto.save();
 
-        res.status(200).json({ auto });
+        res.status(200).json(auto);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
