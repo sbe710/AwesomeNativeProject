@@ -5,9 +5,12 @@ interface IAuto {
     autoName: string;
 }
 
-const schema = new Schema<IAuto>({
-    autoNumber: { type: String, required: true },
-    autoName: { type: String, required: true },
-});
+const schema = new Schema<IAuto>(
+    {
+        autoNumber: { type: String, required: true },
+        autoName: { type: String, required: true },
+    },
+    { versionKey: false }
+);
 
 export const AutoModel = model<IAuto>('Auto', schema);

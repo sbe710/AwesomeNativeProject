@@ -4,31 +4,38 @@ import { Text, View, StyleSheet, TextInput, Button } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import Constants from 'expo-constants';
 
-interface NewAutoModel {
+interface AutoModel {
     autoName: string;
     autoNumber: string;
     _id: string;
 }
 
 const FormComponent = () => {
-    const [autos, setAutos] = useState<NewAutoModel[]>();
+    const [autos, setAutos] = useState<AutoModel[]>([]);
 
     useEffect(() => {
         axios.get('http://192.168.0.65:3000/api/v1/auto').then(res => {
             console.log(res.data);
             setAutos(res.data);
         });
-    });
+    }, []);
 
-    const { handleSubmit, control } = useForm<NewAutoModel>({
+    const { handleSubmit, control } = useForm<AutoModel>({
         defaultValues: {
             autoName: '',
             autoNumber: '',
         },
     });
-    const onSubmit = async (data: NewAutoModel) => {
-        const request = await axios.post('http://192.168.0.65:3000/api/v1/auto', data);
-        console.log(request.data);
+    const onSubmit = async (formData: AutoModel) => {
+        const { data } = await axios.post<AutoModel>('http://192.168.0.65:3000/api/v1/auto', formData);
+
+        setAutos(autos => [...autos, data]);
+        console.log(data);
+    };
+
+    const onDelete = async (auto: AutoModel) => {
+        const { data } = await axios.delete<AutoModel[]>(`http://192.168.0.65:3000/api/v1/auto/${auto._id}`);
+        setAutos(data);
     };
 
     return (
@@ -71,6 +78,7 @@ const FormComponent = () => {
                     <View key={auto._id} style={styles.autos}>
                         <Text style={styles.title}>{auto.autoNumber}</Text>
                         <Text style={styles.title}>{auto.autoName}</Text>
+                        <Button title={'Delete'} onPress={() => onDelete(auto)} />
                     </View>
                 ))}
             </View>
